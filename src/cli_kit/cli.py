@@ -10,6 +10,10 @@ from cli_kit import devbox, outcome
 from cli_kit.colour import BOLD, CYAN, GREY, YELLOW, Style, wants_colour
 from cli_kit.outcome import Done, NothingToDo, Precondition, Problem
 
+# What each command module's register(subparsers) is given: add its parser with
+# subparsers.add_parser(name, help=..., description=...).
+type Subparsers = argparse._SubParsersAction
+
 
 class HelpFormatter(argparse.RawDescriptionHelpFormatter):
     """Help that tells what you type from what you fill in: `release <dir> patch|minor|major`.
@@ -126,9 +130,7 @@ def _problem_lines(command: str, problem: Problem) -> list[str]:
     return [f"❌ {command.capitalize()} failed.", problem.message, *problem.details]
 
 
-def _print_commands(
-    parser: ArgumentParser, subparsers: argparse._SubParsersAction, file: TextIO
-) -> None:
+def _print_commands(parser: ArgumentParser, subparsers: Subparsers, file: TextIO) -> None:
     """The overview: usage, description, then each command's arguments and summary.
 
     On a terminal each command's name is bold and its summary grey, and the rest is coloured as

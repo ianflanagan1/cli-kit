@@ -26,7 +26,7 @@ def command(
         ran.append(args)
         return does(args) if does else Done("Made.")
 
-    def register(subparsers: argparse._SubParsersAction) -> None:
+    def register(subparsers: cli.Subparsers) -> None:
         parser = subparsers.add_parser(name, help=summary, description=f"All about {name}.")
         for argument in arguments:
             parser.add_argument(argument, nargs="?" if argument.startswith("opt") else None)
@@ -144,7 +144,7 @@ def test_help_writes_arguments_as_placeholders_so_they_differ_from_commands(comm
 
 
 def test_help_writes_a_fixed_set_of_values_as_alternatives(capsys):
-    def register(subparsers: argparse._SubParsersAction) -> None:
+    def register(subparsers: cli.Subparsers) -> None:
         parser = subparsers.add_parser("bump", help="bump the version")
         parser.add_argument("level", choices=["patch", "minor", "major"])
         parser.add_argument("--style", choices=["v", "bare"])
@@ -154,7 +154,7 @@ def test_help_writes_a_fixed_set_of_values_as_alternatives(capsys):
 
 
 def test_help_names_an_options_value_in_lower_case(capsys):
-    def register(subparsers: argparse._SubParsersAction) -> None:
+    def register(subparsers: cli.Subparsers) -> None:
         subparsers.add_parser("tag", help="tag it").add_argument("--message")
 
     cli.run("tool", "Do things.", [SimpleNamespace(register=register)], ["help"])
@@ -162,7 +162,7 @@ def test_help_names_an_options_value_in_lower_case(capsys):
 
 
 def test_a_commands_description_keeps_its_line_breaks(capsys):
-    def register(subparsers: argparse._SubParsersAction) -> None:
+    def register(subparsers: cli.Subparsers) -> None:
         subparsers.add_parser("list", help="list", description="Steps:\n  1. one\n  2. two")
 
     cli.run("tool", "Do things.", [SimpleNamespace(register=register)], ["help", "list"])

@@ -42,7 +42,7 @@ Each tool is its own repository in `~/projects/cli/<tool>`, a uv project in its 
 
 ## Adding a command to a tool
 
-Add a module to the tool's `commands/` with a `register(subparsers)` function, which adds its parser and sets its `run`, and list the module in the tool's `__main__.py`. Its help line comes from `register`. Don't set `formatter_class`: cli-kit gives every command its own, which keeps the description's line breaks.
+Add a module to the tool's `commands/` with a `register(subparsers: cli.Subparsers)` function, which adds its parser and sets its `run`, and list the module in the tool's `__main__.py`. Its help line comes from `register`. Don't set `formatter_class`: cli-kit gives every command its own, which keeps the description's line breaks.
 
 ## Changing cli-kit
 
