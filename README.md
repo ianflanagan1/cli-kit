@@ -5,6 +5,7 @@ The framework my command line tools are built on: subcommands, help, exit status
 | Tool | Commands | What for |
 |---|---|---|
 | [repo-tools](../repo-tools) | `github`, `packagist`, `repo-list`, `repo-fix` | Publishing repos on GitHub and Packagist, and reporting and fixing the state of every repo under `~/projects` |
+| [mem-tools](../mem-tools) | `mem` | Seeing how close a development machine is to running out of memory, what's using it by app and by project, and what's safe to stop |
 
 ## How every command behaves
 
