@@ -39,7 +39,7 @@ Tools also follow these rules, which cli-kit can't enforce:
 Each tool is its own repository in `~/projects/cli/<tool>`, a uv project in its own devbox. Copy repo-tools for the shape:
 
 1. `devbox.json` with `python@3.13` and `uv`, plus the programs its commands run, and `"UV_PYTHON_DOWNLOADS": "never"`, so uv uses devbox's Python.
-2. `pyproject.toml` depending on `cli-kit`, naming its commands under `[project.scripts]`, with its code in `src/<package>/` and its tests in `tests/`. Until cli-kit is on GitHub, take it from its folder: `cli-kit = { path = "../cli-kit" }` under `[tool.uv.sources]`.
+2. `pyproject.toml` depending on `cli-kit`, naming its commands under `[project.scripts]`, with its code in `src/<package>/` and its tests in `tests/`. Take cli-kit from its main branch on GitHub: `cli-kit = { git = "https://github.com/ianflanagan1/cli-kit", branch = "main" }` under `[tool.uv.sources]`.
 3. A `setup.sh` that checks its commands were built and prints the `ln -sf` lines that put them on your PATH, run by `devbox run setup` after `uv sync`.
 
 ## Adding a command to a tool
@@ -78,7 +78,7 @@ So a tool's README needn't repeat the commands: it says which tokens there are a
 
 ## Changing cli-kit
 
-cli-kit's behaviour is every tool's behaviour, so change it test-first, and state in its own tests everything a tool relies on: tools aren't where cli-kit's regressions should be caught. Then, in each tool, run `devbox run -- uv sync` to rebuild cli-kit into it and run its tests. Add something to cli-kit only once two tools need it; until then it stays in the tool.
+cli-kit's behaviour is every tool's behaviour, so change it test-first, and state in its own tests everything a tool relies on: tools aren't where cli-kit's regressions should be caught. Push it, then update each tool to it and run the tool's tests. Add something to cli-kit only once two tools need it; until then it stays in the tool.
 
 ## Development
 
