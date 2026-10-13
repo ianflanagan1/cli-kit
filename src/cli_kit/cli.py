@@ -8,8 +8,7 @@ from typing import TextIO
 
 from cli_kit import devbox, outcome
 from cli_kit.colour import BOLD, CYAN, GREY, YELLOW, Style, wants_colour
-from cli_kit.errors import Precondition, Problem
-from cli_kit.outcome import Done, NothingToDo
+from cli_kit.outcome import Done, NothingToDo, Precondition, Problem
 
 
 class HelpFormatter(argparse.RawDescriptionHelpFormatter):

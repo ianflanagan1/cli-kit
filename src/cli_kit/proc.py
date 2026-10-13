@@ -3,7 +3,7 @@
 import os
 import subprocess
 
-from cli_kit.errors import Failure
+from cli_kit.outcome import Failure
 
 
 def output(*args: str, input: str | None = None, env: dict[str, str] | None = None) -> str:

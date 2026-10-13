@@ -21,7 +21,7 @@ cli-kit gives every tool built on `cli_kit.cli.run`:
   | `❌ Publish failed.` and the error | a step ran and failed | raises `Failure(message, *details)` | 1 |
   | `🛑 Stopped.`, what was done, the error, how to resume | either problem, after it had changed something | calls `outcome.changed(...)` for each change | 1 |
 
-  Usage errors exit 2. ✅ and ➖ go to stdout; the rest to stderr. A command that returns anything else is a bug, and `cli.run` raises. Check preconditions before the first change, so a problem with them is ⚠️, not 🛑. The scheme comes from the improve-skill plugin's `skill-conventions.md`, and `cli_kit/outcome.py` names that file: change both together.
+  Usage errors exit 2. ✅ and ➖ go to stdout; the rest to stderr. A command that returns anything else is a bug, and `cli.run` raises. Check preconditions before the first change, so a problem with them is ⚠️, not 🛑. All four come from `cli_kit.outcome`. The scheme comes from the improve-skill plugin's `skill-conventions.md`, and `cli_kit/outcome.py` names that file: change both together.
 - **Any other exception** is a bug, and shows a traceback.
 - **Programs it runs** come from the tool's devbox first: `cli_kit.devbox` puts the tool's `.devbox` packages, such as `gh`, first on the PATH, so a command run from `.venv/bin` without starting devbox still runs the programs devbox pins.
 

@@ -1,8 +1,8 @@
 """The foundation of my command line tools.
 
 cli: a command line of subcommands, with help, status lines and exit statuses.
-outcome: how a command ends, Done or NothingToDo, and the changes it made on the way.
-errors: Precondition and Failure, the problems a command raises for the user to fix.
+outcome: how a command ends: it returns Done or NothingToDo, or raises Precondition or Failure,
+    and records each change it makes on the way.
 proc: running other programs, such as git and gh.
 credentials: tokens from the system credential store.
 terminal: asking the person at the terminal.

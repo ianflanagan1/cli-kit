@@ -11,7 +11,7 @@ import shutil
 import subprocess
 from dataclasses import dataclass
 
-from cli_kit.errors import Precondition
+from cli_kit.outcome import Precondition
 
 
 @dataclass(frozen=True)

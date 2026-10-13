@@ -3,7 +3,7 @@ import builtins
 import pytest
 
 from cli_kit import terminal
-from cli_kit.errors import Precondition
+from cli_kit.outcome import Precondition
 
 
 def test_fails_when_there_is_no_terminal(monkeypatch: pytest.MonkeyPatch):

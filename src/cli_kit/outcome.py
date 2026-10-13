@@ -6,8 +6,8 @@ command reports like a skill does. Change both together.
 
     ✅ Done          the command changed state as asked; then its result, such as a URL
     ➖ NothingToDo   there was nothing to do
-    ⚠️ Precondition  something it needs isn't so, so it tried nothing (raised; see errors)
-    ❌ Failure       a step ran and failed (raised; see errors)
+    ⚠️ Precondition  something it needs isn't so, so it tried nothing (raised)
+    ❌ Failure       a step ran and failed (raised)
     🛑 Stopped       either problem, after the command had changed something
 
 A command returns Done or NothingToDo, or raises Precondition or Failure. Each change it makes
@@ -29,6 +29,25 @@ class NothingToDo:
 
     def __init__(self, summary: str) -> None:
         self.summary = summary
+
+
+class Problem(Exception):
+    """A problem the user can fix: a message, then any lines of detail."""
+
+    def __init__(self, message: str, *details: str) -> None:
+        super().__init__(message)
+        self.message = message
+        self.details = details
+
+
+class Precondition(Problem):
+    """Something the command needs isn't so, so it tried nothing: ⚠️, and the message is the
+    status line, as a sentence. After a change (see changed), it stops: 🛑."""
+
+
+class Failure(Problem):
+    """A step ran and failed: ❌ <Command> failed., then the message. After a change (see
+    changed), it stops: 🛑."""
 
 
 _changes: list[str] = []

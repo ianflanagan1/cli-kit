@@ -1,6 +1,6 @@
 """Asking the person at the terminal."""
 
-from cli_kit.errors import Precondition
+from cli_kit.outcome import Precondition
 
 
 def ask(prompt: str) -> str:

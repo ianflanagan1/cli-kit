@@ -10,8 +10,7 @@ import pytest
 
 from cli_kit import cli, devbox, outcome
 from cli_kit.colour import BOLD, CYAN, GREY, RESET, YELLOW
-from cli_kit.errors import Failure, Precondition
-from cli_kit.outcome import Done, NothingToDo
+from cli_kit.outcome import Done, Failure, NothingToDo, Precondition
 
 
 def command(
