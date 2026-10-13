@@ -28,6 +28,7 @@ cli-kit gives every tool built on `cli_kit.cli.run`:
 
 Tools also follow these rules, which cli-kit can't enforce:
 
+- Run on macOS and Linux, every feature on both.
 - Use the standard library first. Add a dependency to a tool's `pyproject.toml` only when it saves real work.
 - Make every command safe to re-run: skip each step that's already done.
 - Never put a secret on a command line. Declare it as a `credentials.Token` and read it from that (see [Credentials](#credentials)), and pass it on stdin or in an environment variable.
