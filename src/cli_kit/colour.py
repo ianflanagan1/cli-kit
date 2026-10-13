@@ -24,7 +24,15 @@ def wants_colour(stream: TextIO = sys.stdout) -> bool:
 
 @dataclass
 class Style:
+    """Styles text when enabled. A command makes one for where its output goes:
+    `colour = Style.for_stream(sys.stdout)`, then `colour(BOLD, name)`."""
+
     enabled: bool
+
+    @classmethod
+    def for_stream(cls, stream: TextIO = sys.stdout) -> "Style":
+        """A style that colours text only when stream wants colour (see wants_colour)."""
+        return cls(enabled=wants_colour(stream))
 
     def __call__(self, code: str, text: str) -> str:
         """text in the style given by code, or as it is when colour is off or text is empty."""

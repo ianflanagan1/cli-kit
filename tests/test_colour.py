@@ -41,3 +41,11 @@ def test_a_style_leaves_text_as_it_is_when_colour_is_off():
 
 def test_a_style_leaves_empty_text_empty():
     assert Style(enabled=True)(BOLD, "") == ""
+
+
+def test_a_style_for_a_terminal_colours_text():
+    assert Style.for_stream(Terminal())(BOLD, "name") == f"{BOLD}name{RESET}"
+
+
+def test_a_style_for_piped_output_leaves_text_as_it_is():
+    assert Style.for_stream(io.StringIO())(BOLD, "name") == "name"

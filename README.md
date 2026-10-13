@@ -10,7 +10,7 @@ The framework my command line tools are built on: subcommands, help, exit status
 
 cli-kit gives every tool built on `cli_kit.cli.run`:
 
-- **Help:** `<tool> help`, `-h`, `--help`, or no command at all, lists the commands with their arguments. `<tool> help <command>` or `<tool> <command> --help` shows one command in full. Placeholders are in angle brackets and a fixed set of values is written as alternatives, `release <dir> patch|minor|major`, so what you type reads differently from what you fill in. On a terminal, headings and command names are bold, command summaries grey, options cyan and placeholders yellow; `NO_COLOR` turns colour off and `FORCE_COLOR` keeps it when piping. A standalone command such as repo-list gets the same by building its parser with `cli.ArgumentParser`. For colour in a command's own output, use `cli_kit.colour`.
+- **Help:** `<tool> help`, `-h`, `--help`, or no command at all, lists the commands with their arguments. `<tool> help <command>` or `<tool> <command> --help` shows one command in full. Placeholders are in angle brackets and a fixed set of values is written as alternatives, `release <dir> patch|minor|major`, so what you type reads differently from what you fill in. On a terminal, headings and command names are bold, command summaries grey, options cyan and placeholders yellow; `NO_COLOR` turns colour off and `FORCE_COLOR` keeps it when piping. A standalone command such as repo-list gets the same by building its parser with `cli.ArgumentParser`. For colour in a command's own output, make a `colour.Style.for_stream(sys.stdout)` and style text with it.
 - **Outcomes:** every command ends with one status line, in the same scheme as my skills:
 
   | Line | Outcome | A command… | Exit |
