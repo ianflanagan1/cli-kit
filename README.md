@@ -29,7 +29,7 @@ Tools also follow these rules, which cli-kit can't enforce:
 
 - Use the standard library first. Add a dependency to a tool's `pyproject.toml` only when it saves real work.
 - Make every command safe to re-run: skip each step that's already done.
-- Never put a secret on a command line. Read it with `cli_kit.credentials`, and pass it on stdin or in an environment variable.
+- Never put a secret on a command line. Declare it as a `credentials.Token` and read it from that (see [Credentials](#credentials)), and pass it on stdin or in an environment variable.
 - Guard a destructive command with typed confirmation (`cli_kit.terminal.ask`) and a separate token with the extra scope. See repo-tools' [Guarding delete](../repo-tools/README.md#guarding-delete).
 
 ## Adding a tool
@@ -43,6 +43,36 @@ Each tool is its own repository in `~/projects/cli/<tool>`, a uv project in its 
 ## Adding a command to a tool
 
 Add a module to the tool's `commands/` with a `register(subparsers: cli.Subparsers)` function, which adds its parser and sets its `run`, and list the module in the tool's `__main__.py`. Its help line comes from `register`. Don't set `formatter_class`: cli-kit gives every command its own, which keeps the description's line breaks.
+
+## Credentials
+
+A tool declares each token it needs once, as a module constant beside the code that uses it, and reads it there:
+
+```python
+from cli_kit.credentials import Token
+
+DELETE_TOKEN = Token(
+    service="github-delete-repo-token",
+    name="GitHub delete_repo token",
+    username="github-username",
+    create="Create a classic token with only the delete_repo scope at https://github.com/settings/tokens.",
+    confirm_each_read=True,
+)
+
+token = DELETE_TOKEN.read().token
+```
+
+cli-kit reads it from the macOS keychain or, on Linux, the Secret Service keyring. When it isn't stored, the command stops with a ⚠️ that says how to create it and gives the command that stores it on that system:
+
+```
+⚠️ No GitHub delete_repo token is stored.
+Create a classic token with only the delete_repo scope at https://github.com/settings/tokens.
+Then store it, pasting it at the prompt:
+  security add-generic-password -a <github-username> -s github-delete-repo-token -T '' -w
+macOS will ask for your login password each time it's read: choose Allow, never Always Allow.
+```
+
+So a tool's README needn't repeat the commands: it says which tokens there are and why, and the commands say how to store them. Set `confirm_each_read` for a token that can do lasting harm; the keychain then asks for your login password on each read. On Linux the keyring has no such check.
 
 ## Changing cli-kit
 
