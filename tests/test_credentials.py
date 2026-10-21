@@ -153,18 +153,26 @@ def test_on_linux_a_missing_token_says_how_to_create_and_store_it(empty_secret_t
     ]
 
 
+# On macOS the token is read at a hidden prompt and passed to `security -i` on stdin: the prompt
+# of `security add-generic-password -w` keeps only 128 characters, and Atlassian's tokens have 192.
+
+
 def test_on_macos_a_missing_token_says_how_to_create_and_store_it(empty_keychain):
     assert missing(PACKAGIST) == [
         "No Packagist main API token is stored.",
         "Copy the main API token from your profile at https://packagist.org/profile/.",
         "Then store it, pasting it at the prompt:",
-        "  security add-generic-password -a <packagist-username> -s packagist-api-token -w",
+        "  printf 'Token: '; read -rs token; echo",
+        "  printf 'add-generic-password -a <packagist-username> -s packagist-api-token -w %s\\n'"
+        ' "$token" | security -i; unset token',
     ]
 
 
 def test_on_macos_a_token_confirmed_on_each_read_is_stored_trusting_no_app(empty_keychain):
     assert missing(GITHUB_DELETE)[3:] == [
-        "  security add-generic-password -a <github-username> -s github-delete-repo-token -T '' -w",
+        "  printf 'Token: '; read -rs token; echo",
+        "  printf 'add-generic-password -a <github-username> -s github-delete-repo-token"
+        ' -T "" -w %s\\n\' "$token" | security -i; unset token',
         "macOS will ask for your login password each time it's read: choose Allow, never"
         " Always Allow.",
     ]

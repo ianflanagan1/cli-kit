@@ -76,19 +76,29 @@ class Token:
         return Credential(username, token)
 
     def _how_to_store(self, system: str) -> list[str]:
-        """The command that stores the token on system, then anything to know about it."""
+        """The commands that store the token on system, then anything to know about them.
+
+        On macOS the token is read at a hidden prompt and passed to `security -i` on stdin, so
+        it's on no command line. The prompt of `security add-generic-password -w` would be
+        simpler, but it keeps only the first 128 characters, and Atlassian's tokens have 192.
+        """
         if system == "Linux":
             return [
                 f"  secret-tool store --label='{self.name}' service {self.service}"
                 f" username <{self.username}>"
             ]
-        if not self.confirm_each_read:
-            return [f"  security add-generic-password -a <{self.username}> -s {self.service} -w"]
-        return [
-            f"  security add-generic-password -a <{self.username}> -s {self.service} -T '' -w",
-            "macOS will ask for your login password each time it's read: choose Allow, never"
-            " Always Allow.",
+        trust_no_app = ' -T ""' if self.confirm_each_read else ""
+        lines = [
+            "  printf 'Token: '; read -rs token; echo",
+            f"  printf 'add-generic-password -a <{self.username}> -s {self.service}{trust_no_app}"
+            ' -w %s\\n\' "$token" | security -i; unset token',
         ]
+        if self.confirm_each_read:
+            lines.append(
+                "macOS will ask for your login password each time it's read: choose Allow, never"
+                " Always Allow."
+            )
+        return lines
 
 
 def keychain_account(listing: str) -> str:

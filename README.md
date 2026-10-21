@@ -70,9 +70,12 @@ cli-kit reads it from the macOS keychain or, on Linux, the Secret Service keyrin
 ⚠️ No GitHub delete_repo token is stored.
 Create a classic token with only the delete_repo scope at https://github.com/settings/tokens.
 Then store it, pasting it at the prompt:
-  security add-generic-password -a <github-username> -s github-delete-repo-token -T '' -w
+  printf 'Token: '; read -rs token; echo
+  printf 'add-generic-password -a <github-username> -s github-delete-repo-token -T "" -w %s\n' "$token" | security -i; unset token
 macOS will ask for your login password each time it's read: choose Allow, never Always Allow.
 ```
+
+On macOS the token goes to `security -i` on stdin, not through `security add-generic-password -w`'s own prompt, which keeps only the first 128 characters of what you paste. Atlassian's API tokens have 192.
 
 So a tool's README needn't repeat the commands: it says which tokens there are and why, and the commands say how to store them. Set `confirm_each_read` for a token that can do lasting harm; the keychain then asks for your login password on each read. On Linux the keyring has no such check.
 
