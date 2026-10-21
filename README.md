@@ -4,8 +4,10 @@ The framework my command line tools are built on: subcommands, help, exit status
 
 | Tool | Commands | What for |
 |---|---|---|
-| [repo-tools](../repo-tools) | `github`, `packagist`, `repo-list`, `repo-fix` | Publishing repos on GitHub and Packagist, and reporting and fixing the state of every repo under `~/projects` |
+| [repo-tools](../repo-tools) | `github`, `bitbucket`, `packagist`, `repo-list`, `repo-fix` | Publishing repos on GitHub, Bitbucket and Packagist, reading their delivery data, and reporting and fixing the state of every repo under `~/projects` |
 | [mem-tools](../mem-tools) | `mem` | Seeing how close a development machine is to running out of memory, what's using it by app and by project, and what's safe to stop |
+| [jira-tools](../jira-tools) | `jira` | Filing Jira issues, with where they were raised, and reading, starting, moving, assigning and commenting on them; and a Claude Code skill that files them |
+| [product-map](../product-map) | `product-map` | Building a product map of an app from its code, for colleagues reporting problems with it, and publishing it to the report-problem plugin |
 
 ## How every command behaves
 
