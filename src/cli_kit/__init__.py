@@ -8,4 +8,5 @@ credentials: tokens from the system credential store.
 terminal: asking the person at the terminal.
 colour: colour on a terminal, honouring NO_COLOR and FORCE_COLOR.
 devbox: putting the tool's devbox packages on the PATH.
+link: linking a tool's commands onto your PATH, which each tool's setup runs.
 """

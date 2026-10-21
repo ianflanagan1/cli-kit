@@ -22,7 +22,7 @@ cli-kit gives every tool built on `cli_kit.cli.run`:
   | `❌ Publish failed.` and the error | a step ran and failed | raises `Failure(message, *details)` | 1 |
   | `🛑 Stopped.`, what was done, the error, how to resume | either problem, after it had changed something | calls `outcome.changed(...)` for each change | 1 |
 
-  Usage errors exit 2. ✅ and ➖ go to stdout; the rest to stderr. A command that returns anything else is a bug, and `cli.run` raises. Check preconditions before the first change, so a problem with them is ⚠️, not 🛑. All four come from `cli_kit.outcome`. The scheme comes from the improve-skill plugin's `skill-conventions.md`, and `cli_kit/outcome.py` names that file: change both together.
+  Usage errors exit 2. ✅ and ➖ go to stdout; the rest to stderr. A command that returns anything else is a bug, and `cli.run` raises. Check preconditions before the first change, so a problem with them is ⚠️, not 🛑. All four come from `cli_kit.outcome`. A standalone command ends the same way by passing its work to `cli.finish`. The scheme is defined in the improve-skill plugin's [skill conventions](https://github.com/ianflanagan1/claude-improve-skill/blob/main/skills/improve-skill/references/skill-conventions.md#status-line); cli-kit implements it.
 - **Any other exception** is a bug, and shows a traceback.
 - **Programs it runs** come from the tool's devbox first: `cli_kit.devbox` puts the tool's `.devbox` packages, such as `gh`, first on the PATH, so a command run from `.venv/bin` without starting devbox still runs the programs devbox pins.
 
@@ -40,7 +40,7 @@ Each tool is its own repository in `~/projects/cli/<tool>`, a uv project in its 
 
 1. `devbox.json` with `python@3.13` and `uv`, plus the programs its commands run, and `"UV_PYTHON_DOWNLOADS": "never"`, so uv uses devbox's Python.
 2. `pyproject.toml` depending on `cli-kit`, naming its commands under `[project.scripts]`, with its code in `src/<package>/` and its tests in `tests/`. Take cli-kit from its main branch on GitHub: `cli-kit = { git = "https://github.com/ianflanagan1/cli-kit", branch = "main" }` under `[tool.uv.sources]`.
-3. A `setup.sh` that checks its commands were built and prints the `ln -sf` lines that put them on your PATH, run by `devbox run setup` after `uv sync`.
+3. A `setup.sh`, run by `devbox run setup` after `uv sync`, that ends with `"$here/.venv/bin/python" -m cli_kit.link "$here"`. That links each command in `[project.scripts]` from `.venv/bin` into `~/.local/bin`, or `$XDG_BIN_HOME`, checking all of them first. It skips links already in place, replaces ones left dangling by a moved checkout, and never replaces a command of the same name from elsewhere.
 
 ## Adding a command to a tool
 

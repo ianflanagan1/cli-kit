@@ -3,6 +3,7 @@
 import argparse
 import re
 import sys
+from collections.abc import Callable
 from types import ModuleType
 from typing import TextIO
 
@@ -99,18 +100,28 @@ def run(prog: str, description: str, commands: list[ModuleType], argv: list[str]
         return 0
 
     devbox.use_tools()
+    return finish(f"{prog} {args.command}", lambda: args.run(args))
+
+
+def finish(command: str, run: Callable[[], object]) -> int:
+    """Runs a command and shows how it ended as one status line (see outcome).
+
+    command names it, such as "github publish"; its last word starts a ❌ line. cli.run ends each
+    command with this; a standalone command calls it itself. Returns the exit status: 0 done or
+    nothing to do, 1 a problem.
+    """
     outcome.reset()
     try:
-        result = args.run(args)
+        result = run()
     except Problem as problem:
-        print("\n".join(_problem_lines(args.command, problem)), file=sys.stderr)
+        print("\n".join(_problem_lines(command.split()[-1], problem)), file=sys.stderr)
         return 1
     if isinstance(result, Done):
         print("\n".join([f"✅ {result.summary}", *result.details]))
     elif isinstance(result, NothingToDo):
         print(f"➖ {result.summary}")
     else:
-        raise TypeError(f"{prog} {args.command} returned {result!r}, not Done or NothingToDo")
+        raise TypeError(f"{command} returned {result!r}, not Done or NothingToDo")
     return 0
 
 
