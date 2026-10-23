@@ -1,6 +1,6 @@
 # cli-kit
 
-The framework my command line tools are built on: subcommands, help, exit statuses, running other programs, credentials and terminal prompts. Each tool is its own repository under `~/projects/cli` and depends on cli-kit, so every command behaves the same way.
+The framework my command line tools are built on: subcommands, help, exit statuses, running other programs, credentials, terminal prompts and language models. Each tool is its own repository under `~/projects/cli` and depends on cli-kit, so every command behaves the same way.
 
 | Tool | Commands | What for |
 |---|---|---|
@@ -80,6 +80,27 @@ macOS will ask for your login password each time it's read: choose Allow, never 
 On macOS the token goes to `security -i` on stdin, not through `security add-generic-password -w`'s own prompt, which keeps only the first 128 characters of what you paste. Atlassian's API tokens have 192.
 
 So a tool's README needn't repeat the commands: it says which tokens there are and why, and the commands say how to store them. Set `confirm_each_read` for a token that can do lasting harm; the keychain then asks for your login password on each read. On Linux the keyring has no such check.
+
+## Language models
+
+A command that asks a model for a reply depends on the `Model` port in `cli_kit.models`, `reply(prompt) -> str | None`, and is handed an adapter where it's wired, so its tests pass a fake and it never names a vendor:
+
+```python
+from cli_kit import models
+from cli_kit.models import Provider
+
+model = models.small(Provider.CLAUDE)
+reply = model.reply(prompt)  # the text, or None when the model couldn't give one
+```
+
+| Provider | `small()` model | Through |
+|---|---|---|
+| `claude` | `haiku` | Claude Code run headless (`claude -p`), signed in as you, with no tools, in an empty directory |
+| `openai` | `gpt-5-mini` | OpenAI's chat completions API, with the `openai-api-key` credential |
+| `gemini` | `gemini-flash-latest` | Gemini's OpenAI-compatible API, with the `gemini-api-key` credential |
+| `mistral` | `mistral-small-latest` | Mistral's chat completions API, with the `mistral-api-key` credential |
+
+A missing key stops the command with the ⚠️ that says how to store it (see [Credentials](#credentials)); every other failure, such as a timeout, an HTTP error or `claude` not being installed, is a `None` reply, for the tool to decide what to do without one. Each key is stored once and shared by every tool. A tool that wants another model builds `ClaudeCode(model, timeout_seconds)` or `ChatCompletions(url, model, key, timeout_seconds)` itself from the URLs and keys in `cli_kit.models`. The prompt, and what the tool keeps of the reply, stay in the tool: they're its contract with the model.
 
 ## Changing cli-kit
 

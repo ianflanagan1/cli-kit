@@ -1,7 +1,7 @@
 [project]
 name = "cli-kit"
 version = "0.1.0"
-description = "The foundation of my command line tools: commands, help, exit statuses, and running other programs."
+description = "The foundation of my command line tools: commands, help, exit statuses, running other programs, credentials and language models."
 requires-python = ">=3.13"
 dependencies = []
 
