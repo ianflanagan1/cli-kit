@@ -43,7 +43,7 @@ Tools also follow these rules, which cli-kit can't enforce:
 Each tool is its own repository in `~/projects/cli/<tool>`, a uv project in its own devbox. Copy repo-tools for the shape:
 
 1. `devbox.json` with `python@3.13` and `uv`, plus the programs its commands run, and `"UV_PYTHON_DOWNLOADS": "never"`, so uv uses devbox's Python.
-2. `pyproject.toml` depending on `cli-kit`, naming its commands under `[project.scripts]`, with its code in `src/<package>/` and its tests in `tests/`. Take cli-kit from its main branch on GitHub: `cli-kit = { git = "https://github.com/ianflanagan1/cli-kit", branch = "main" }` under `[tool.uv.sources]`.
+2. `pyproject.toml` depending on `cli-kit`, naming its commands under `[project.scripts]`, with its code in `src/<package>/` and its tests in `tests/`. Pin cli-kit to a release tag on GitHub, `cli-kit = { git = "https://github.com/ianflanagan1/cli-kit", tag = "v0.1.0" }` under `[tool.uv.sources]`, never to a branch or a sibling checkout's path, so the tool builds the same way on any machine. Take another tool's library the same way. To release, raise `version` in `pyproject.toml`, commit, then tag it `v<version>` and push the tag; dependants move to it by changing their tag and running `uv lock`.
 3. A `setup.sh`, run by `devbox run setup` after `uv sync`, that ends with `"$here/.venv/bin/python" -m cli_kit.link "$here"`. That links each command in `[project.scripts]` from `.venv/bin` into `~/.local/bin`, or `$XDG_BIN_HOME`, checking all of them first. It skips links already in place, replaces ones left dangling by a moved checkout, and never replaces a command of the same name from elsewhere.
 
 ## Adding a command to a tool
