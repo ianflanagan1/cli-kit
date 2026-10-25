@@ -83,6 +83,10 @@ On macOS the token goes to `security -i` on stdin, not through `security add-gen
 
 So a tool's README needn't repeat the commands: it says which tokens there are and why, and the commands say how to store them. Set `confirm_each_read` for a token that can do lasting harm; the keychain then asks for your login password on each read. On Linux the keyring has no such check.
 
+## Repository settings
+
+Settings a repository's team shares, such as where its issues go, are committed in its `.config/` directory, one file for each purpose. [repo-settings](../repo-settings) reads them, from whichever copy each tool says: a worktree's, a branch's or the code host's.
+
 ## Language models
 
 A command that asks a model for a reply depends on the `Model` port in `cli_kit.models`, `reply(prompt) -> str | None`, and is handed an adapter where it's wired, so its tests pass a fake and it never names a vendor:
