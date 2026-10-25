@@ -89,15 +89,17 @@ Settings a repository's team shares, such as where its issues go, are committed 
 
 ## Language models
 
-A command that asks a model for a reply depends on the `Model` port in `cli_kit.models`, `reply(prompt) -> str | None`, and is handed an adapter where it's wired, so its tests pass a fake and it never names a vendor:
+A command that asks a model for a reply depends on the `Model` port in `cli_kit.models`, `reply(prompt, purpose) -> str | None`, and is handed an adapter where it's wired, so its tests pass a fake and it never names a vendor:
 
 ```python
-from cli_kit import models
+from cli_kit import models, outcome
 from cli_kit.models import Provider
 
-model = models.small(Provider.CLAUDE)
-reply = model.reply(prompt)  # the text, or None when the model couldn't give one
+model = models.small(Provider.CLAUDE, outcome.starting)
+reply = model.reply(prompt, "Writing a description for me/thing")  # the text, or None
 ```
+
+Calling a model or an agent is always slow, so none runs silently. Every call names its `purpose`, which has no default, so leaving it out fails the type check; and every adapter is built with an announcer, which it tells the purpose just before the slow part. A command wires `outcome.starting`, so the purpose shows as `… Writing a description for me/thing`; a tool with its own output, such as repo-fix's log under each repository, wires its own.
 
 | Provider | `small()` model | Through |
 |---|---|---|
@@ -106,7 +108,19 @@ reply = model.reply(prompt)  # the text, or None when the model couldn't give on
 | `gemini` | `gemini-flash-latest` | Gemini's OpenAI-compatible API, with the `gemini-api-key` credential |
 | `mistral` | `mistral-small-latest` | Mistral's chat completions API, with the `mistral-api-key` credential |
 
-A missing key stops the command with the ⚠️ that says how to store it (see [Credentials](#credentials)); every other failure, such as a timeout, an HTTP error or `claude` not being installed, is a `None` reply, for the tool to decide what to do without one. Each key is stored once and shared by every tool. A tool that wants another model builds `ClaudeCode(model, timeout_seconds)` or `ChatCompletions(url, model, key, timeout_seconds)` itself from the URLs and keys in `cli_kit.models`. The prompt, and what the tool keeps of the reply, stay in the tool: they're its contract with the model.
+A missing key stops the command with the ⚠️ that says how to store it (see [Credentials](#credentials)); every other failure, such as a timeout, an HTTP error or `claude` not being installed, is a `None` reply, for the tool to decide what to do without one. Each key is stored once and shared by every tool. A tool that wants another model builds `ClaudeCode(model, timeout_seconds, announce)` or `ChatCompletions(url, model, key, timeout_seconds, announce)` itself from the URLs and keys in `cli_kit.models`. The prompt, and what the tool keeps of the reply, stay in the tool: they're its contract with the model.
+
+A reply sees only the prompt and the model's global context. A command that needs an agent to work in a directory, reading its files and changing them, depends on the `Agent` port instead, `run(prompt, workspace, readable, purpose) -> Finished | Failed | TimedOut`, from `cli_kit.models.agent`:
+
+```python
+from cli_kit import outcome
+from cli_kit.models.claude_code import ClaudeCode
+
+agent = ClaudeCode(None, 30 * 60, outcome.starting)  # None: the model Claude Code is set to use
+ended = agent.run("/ianf-commit", repo, [skill_dir], "Committing with /ianf-commit")
+```
+
+`ClaudeCode` runs it as a Claude Code session in `workspace`, with its tools, and `--add-dir` for each readable directory; the prompt is an argument, so a skill's slash command works. `Finished` and `Failed` carry what the agent said, or all it printed when it couldn't say; `TimedOut` comes after `timeout_seconds`, and may have done some of the work. Judge the run by what changed in the workspace, not by what it said: a skill that fails to load still finishes. A Claude Code session started this way loads your own hooks and settings, as any session does.
 
 ## Changing cli-kit
 

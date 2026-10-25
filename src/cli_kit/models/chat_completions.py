@@ -7,6 +7,7 @@ import urllib.request
 from dataclasses import dataclass
 
 from cli_kit.credentials import Token
+from cli_kit.models.agent import Announce
 
 
 @dataclass(frozen=True)
@@ -15,10 +16,13 @@ class ChatCompletions:
     model: str
     key: Token
     timeout_seconds: float
+    announce: Announce
+    """Shows each call's purpose as it starts."""
 
-    def reply(self, prompt: str) -> str | None:
+    def reply(self, prompt: str, purpose: str) -> str | None:
         """Raises Precondition, saying how to store it, when the key isn't stored."""
         key = self.key.read().token
+        self.announce(purpose)
         request = urllib.request.Request(
             self.url,
             data=json.dumps(

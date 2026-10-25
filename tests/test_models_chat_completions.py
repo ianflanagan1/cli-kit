@@ -50,8 +50,16 @@ def server(monkeypatch: pytest.MonkeyPatch) -> Server:
 
 
 @pytest.fixture
-def model() -> ChatCompletions:
-    return ChatCompletions("https://api.example.com/v1/chat/completions", "small", TOKEN, 30)
+def announced() -> list[str]:
+    """What the model was told to announce."""
+    return []
+
+
+@pytest.fixture
+def model(announced: list[str]) -> ChatCompletions:
+    return ChatCompletions(
+        "https://api.example.com/v1/chat/completions", "small", TOKEN, 30, announced.append
+    )
 
 
 def reply_of(text: object) -> dict:
@@ -60,7 +68,7 @@ def reply_of(text: object) -> dict:
 
 def test_the_prompt_is_posted_as_a_user_message_with_the_key_as_bearer(server, model):
     server.answer = reply_of("Sorts socks.")
-    assert model.reply("Describe it.") == "Sorts socks."
+    assert model.reply("Describe it.", "Asking") == "Sorts socks."
     [request] = server.requests
     assert request.full_url == "https://api.example.com/v1/chat/completions"
     assert request.get_method() == "POST"
@@ -74,29 +82,29 @@ def test_the_prompt_is_posted_as_a_user_message_with_the_key_as_bearer(server, m
 
 def test_an_http_error_is_no_reply(server, model):
     server.answer = 429
-    assert model.reply("Describe it.") is None
+    assert model.reply("Describe it.", "Asking") is None
 
 
 def test_an_unreachable_api_is_no_reply(server, model):
     server.answer = urllib.error.URLError("no route")
-    assert model.reply("Describe it.") is None
+    assert model.reply("Describe it.", "Asking") is None
 
 
 def test_a_timeout_is_no_reply(server, model):
     server.answer = TimeoutError()
-    assert model.reply("Describe it.") is None
+    assert model.reply("Describe it.", "Asking") is None
 
 
 def test_an_answer_that_is_not_json_is_no_reply(server, model):
     server.answer = "<html>"
-    assert model.reply("Describe it.") is None
+    assert model.reply("Describe it.", "Asking") is None
 
 
 def test_an_answer_without_text_is_no_reply(server, model):
     server.answer = {"choices": []}
-    assert model.reply("Describe it.") is None
+    assert model.reply("Describe it.", "Asking") is None
     server.answer = reply_of(None)
-    assert model.reply("Describe it.") is None
+    assert model.reply("Describe it.", "Asking") is None
 
 
 def test_a_missing_key_stops_before_anything_is_sent(monkeypatch: pytest.MonkeyPatch, model):
@@ -106,5 +114,11 @@ def test_a_missing_key_stops_before_anything_is_sent(monkeypatch: pytest.MonkeyP
     monkeypatch.setattr(Token, "read", missing)
     server = Server(monkeypatch)
     with pytest.raises(Precondition, match="No Test API key"):
-        model.reply("Describe it.")
+        model.reply("Describe it.", "Asking")
     assert server.requests == []
+
+
+def test_a_reply_says_its_purpose_before_the_request(server, model, announced):
+    server.answer = reply_of("Sorts socks.")
+    model.reply("Describe it.", "Writing a description for me/thing")
+    assert announced == ["Writing a description for me/thing"]
