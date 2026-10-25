@@ -11,8 +11,17 @@ https://github.com/ianflanagan1/skill-authoring/blob/main/skill-conventions.md#s
     🛑 Stopped       either problem, after the command had changed something
 
 A command returns Done or NothingToDo, or raises Precondition or Failure. Each change it makes
-goes through changed(), so a later problem can say what was done before it stopped.
+goes through changed(), so a later problem can say what was done before it stopped. A step that
+can take a while, such as waiting for CI or asking a model, first goes through starting(), so
+the wait isn't silent.
 """
+
+import sys
+
+from cli_kit.colour import GREY, Style
+
+STARTING = "…"
+"""What marks a step as under way, before the step's description."""
 
 
 class Done:
@@ -57,6 +66,13 @@ def changed(description: str) -> None:
     """Shows and records a change the command has made, such as "Created me/thing"."""
     print(description)
     _changes.append(description)
+
+
+def starting(description: str) -> None:
+    """Shows, on stderr and at once, that a step that can take a while is starting, such as
+    "Waiting for CI". It isn't a change, so a later problem doesn't list it."""
+    colour = Style.for_stream(sys.stderr)
+    print(colour(GREY, f"{STARTING} {description}"), file=sys.stderr, flush=True)
 
 
 def changes() -> list[str]:
