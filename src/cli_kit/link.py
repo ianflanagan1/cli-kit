@@ -19,7 +19,7 @@ from cli_kit.outcome import Done, NothingToDo, Precondition, changed
 
 def main(argv: list[str] | None = None) -> int:
     parser = cli.ArgumentParser(prog="python -m cli_kit.link", description=__doc__)
-    parser.add_argument("project", nargs="?", default=".", help="default: the current folder")
+    parser.add_argument("project", nargs="?", default=".", help="default: the current directory")
     args = parser.parse_args(argv)
     return cli.finish("link", lambda: link(Path(args.project).resolve(), bin_dir()))
 

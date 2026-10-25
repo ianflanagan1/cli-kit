@@ -10,7 +10,7 @@ from cli_kit import link
 
 @pytest.fixture
 def bin_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
-    """The folder commands are linked into, on the PATH."""
+    """The directory commands are linked into, on the PATH."""
     path = tmp_path / "bin"
     monkeypatch.setenv("XDG_BIN_HOME", str(path))
     monkeypatch.setenv("PATH", f"{path}{os.pathsep}/usr/bin")
@@ -33,7 +33,7 @@ def project(tmp_path: Path, *commands: str, built: bool = True) -> Path:
     return root
 
 
-def test_links_each_command_into_the_bin_folder(tmp_path, bin_dir, capsys):
+def test_links_each_command_into_the_bin_directory(tmp_path, bin_dir, capsys):
     root = project(tmp_path, "one", "two")
     assert link.main([str(root)]) == 0
     for command in ("one", "two"):
@@ -41,14 +41,14 @@ def test_links_each_command_into_the_bin_folder(tmp_path, bin_dir, capsys):
     assert capsys.readouterr().out.splitlines()[-1] == "✅ Linked."
 
 
-def test_takes_the_project_from_the_current_folder(tmp_path, bin_dir, monkeypatch, capsys):
+def test_takes_the_project_from_the_current_directory(tmp_path, bin_dir, monkeypatch, capsys):
     root = project(tmp_path, "one")
     monkeypatch.chdir(root)
     assert link.main([]) == 0
     assert os.readlink(bin_dir / "one") == str(root / ".venv" / "bin" / "one")
 
 
-def test_the_bin_folder_is_local_bin_in_home_without_xdg_bin_home(
+def test_the_bin_directory_is_local_bin_in_home_without_xdg_bin_home(
     tmp_path, bin_dir, monkeypatch, capsys
 ):
     monkeypatch.delenv("XDG_BIN_HOME")
@@ -100,7 +100,7 @@ def test_a_command_not_built_yet_says_to_run_setup_and_nothing_is_linked(tmp_pat
     )
 
 
-def test_a_folder_without_pyproject_toml_isnt_a_tool(tmp_path, bin_dir, capsys):
+def test_a_directory_without_pyproject_toml_isnt_a_tool(tmp_path, bin_dir, capsys):
     assert link.main([str(tmp_path)]) == 1
     assert capsys.readouterr().err == f"⚠️ No pyproject.toml in {tmp_path.resolve()}.\n"
 
@@ -111,7 +111,7 @@ def test_a_project_without_commands_has_nothing_to_link(tmp_path, bin_dir, capsy
     assert capsys.readouterr().out == "➖ No commands to link.\n"
 
 
-def test_says_how_to_put_the_bin_folder_on_the_path_when_it_isnt(
+def test_says_how_to_put_the_bin_directory_on_the_path_when_it_isnt(
     tmp_path, bin_dir, monkeypatch, capsys
 ):
     monkeypatch.setenv("PATH", "/usr/bin")
