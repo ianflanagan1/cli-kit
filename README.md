@@ -24,7 +24,7 @@ cli-kit gives every tool built on `cli_kit.cli.run`:
   | `❌ Publish failed.` and the error | a step ran and failed | raises `Failure(message, *details)` | 1 |
   | `🛑 Stopped.`, what was done, the error, how to resume | either problem, after it had changed something | calls `outcome.changed(...)` for each change | 1 |
 
-  Usage errors exit 2. ✅ and ➖ go to stdout; the rest to stderr. A command that returns anything else is a bug, and `cli.run` raises. Check preconditions before the first change, so a problem with them is ⚠️, not 🛑. All four come from `cli_kit.outcome`. A standalone command ends the same way by passing its work to `cli.finish`. The scheme is defined in the improve-skill plugin's [skill conventions](https://github.com/ianflanagan1/claude-improve-skill/blob/main/skills/improve-skill/references/skill-conventions.md#status-line); cli-kit implements it.
+  Usage errors exit 2. ✅ and ➖ go to stdout; the rest to stderr. A command that returns anything else is a bug, and `cli.run` raises. Check preconditions before the first change, so a problem with them is ⚠️, not 🛑. All four come from `cli_kit.outcome`. A standalone command ends the same way by passing its work to `cli.finish`. The scheme is defined in skill-authoring's [skill conventions](https://github.com/ianflanagan1/skill-authoring/blob/main/skill-conventions.md#status-line); cli-kit implements it.
 - **Any other exception** is a bug, and shows a traceback.
 - **Programs it runs** come from the tool's devbox first: `cli_kit.devbox` puts the tool's `.devbox` packages, such as `gh`, first on the PATH, so a command run from `.venv/bin` without starting devbox still runs the programs devbox pins.
 

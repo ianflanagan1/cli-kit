@@ -1,8 +1,8 @@
 """How a command ends, which cli.run shows as one status line.
 
-This implements the scheme the improve-skill plugin's skill conventions define, so a command
-reports like a skill does:
-https://github.com/ianflanagan1/claude-improve-skill/blob/main/skills/improve-skill/references/skill-conventions.md#status-line
+This implements the scheme skill-authoring's skill conventions define, so a command reports
+like a skill does:
+https://github.com/ianflanagan1/skill-authoring/blob/main/skill-conventions.md#status-line
 
     ✅ Done          the command changed state as asked; then its result, such as a URL
     ➖ NothingToDo   there was nothing to do
