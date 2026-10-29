@@ -50,7 +50,7 @@ class ClaudeCode:
     def _claude(self, args: list[str], cwd: Path, stdin: str) -> Ended:
         try:
             result = subprocess.run(
-                [CLAUDE, "-p", *args, "--output-format", "json", "--no-session-persistence"],
+                [CLAUDE, "--print", *args, "--output-format", "json", "--no-session-persistence"],
                 cwd=cwd,
                 input=stdin,
                 capture_output=True,

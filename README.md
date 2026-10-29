@@ -103,7 +103,7 @@ Calling a model or an agent is always slow, so none runs silently. Every call na
 
 | Provider | `small()` model | Through |
 |---|---|---|
-| `claude` | `haiku` | Claude Code run headless (`claude -p`), signed in as you, with no tools, in an empty directory |
+| `claude` | `haiku` | Claude Code run headless (`claude --print`), signed in as you, with no tools, in an empty directory |
 | `openai` | `gpt-5-mini` | OpenAI's chat completions API, with the `openai-api-key` credential |
 | `gemini` | `gemini-flash-latest` | Gemini's OpenAI-compatible API, with the `gemini-api-key` credential |
 | `mistral` | `mistral-small-latest` | Mistral's chat completions API, with the `mistral-api-key` credential |

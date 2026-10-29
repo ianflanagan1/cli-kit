@@ -51,7 +51,7 @@ def test_the_prompt_goes_to_claude_on_stdin_with_no_tools(claude):
     log = claude(f"echo '{answer}'")
     assert ClaudeCode("haiku", 5, ignore).reply("Describe it.", "Describing it") == "Sorts socks."
     called = log.read_text().splitlines()
-    assert called[:3] == ["-p", "--model", "haiku"]
+    assert called[:3] == ["--print", "--model", "haiku"]
     assert called[called.index("--tools") + 1] == ""
     assert called[-1] == "Describe it."
 
@@ -93,7 +93,7 @@ def test_an_agent_runs_the_prompt_in_the_workspace_able_to_read_the_other_direct
     log = claude(f"pwd > {tmp_path / 'cwd'}; echo '{FINISHED}'")
     ClaudeCode("opus", 5, ignore).run("/ianf-commit", workspace, [shared], "Committing")
     called = log.read_text().splitlines()
-    assert called[:4] == ["-p", "/ianf-commit", "--model", "opus"]
+    assert called[:4] == ["--print", "/ianf-commit", "--model", "opus"]
     assert called[called.index("--add-dir") + 1] == str(shared)
     assert "--tools" not in called
     assert Path((tmp_path / "cwd").read_text().strip()).resolve() == workspace.resolve()
