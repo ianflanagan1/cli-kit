@@ -1,10 +1,10 @@
 """Links a tool's commands onto your PATH: each one in its pyproject.toml's [project.scripts],
 from the project's .venv/bin into $XDG_BIN_HOME, or ~/.local/bin without it.
 
-Each tool's `devbox run setup` runs it after `uv sync`. The commands are console scripts pointing
-at the Python devbox pins, so they run without starting devbox. Run it again after moving a
-checkout: a link left dangling is replaced, but a command of the same name from elsewhere is
-left alone.
+Each tool's `devbox run -- task setup` runs it after `uv sync`. The commands are console
+scripts pointing at the Python devbox pins, so they run without starting devbox. Run it again
+after moving a checkout: a link left dangling is replaced, but a command of the same name from
+elsewhere is left alone.
 """
 
 import os
@@ -42,7 +42,7 @@ def link(project: Path, bin_dir: Path) -> Done | NothingToDo:
     if unbuilt := [c for c, source in sources.items() if not os.access(source, os.X_OK)]:
         raise Precondition(
             f"Not built: {', '.join(unbuilt)}.",
-            f"Run `devbox run setup` in {project}, which builds them with `uv sync` first.",
+            f"Run `devbox run -- task setup` in {project}, which builds them with `uv sync` first.",
         )
     todo = [c for c in commands if _target(bin_dir / c) != str(sources[c])]
     if taken := [c for c in todo if (bin_dir / c).exists()]:

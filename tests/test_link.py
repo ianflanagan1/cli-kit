@@ -1,4 +1,4 @@
-"""Linking a tool's commands onto the PATH, as `devbox run setup` does after `uv sync`."""
+"""Linking a tool's commands onto the PATH, as `devbox run -- task setup` does after `uv sync`."""
 
 import os
 from pathlib import Path
@@ -96,7 +96,7 @@ def test_a_command_not_built_yet_says_to_run_setup_and_nothing_is_linked(tmp_pat
     assert not (bin_dir / "one").exists()
     assert capsys.readouterr().err == (
         "⚠️ Not built: one.\n"
-        f"Run `devbox run setup` in {root}, which builds them with `uv sync` first.\n"
+        f"Run `devbox run -- task setup` in {root}, which builds them with `uv sync` first.\n"
     )
 
 

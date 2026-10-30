@@ -1,0 +1,18 @@
+version: '3'
+
+tasks:
+  setup:
+    desc: Build .venv
+    cmds:
+      - uv sync
+
+  test:
+    desc: Run the tests
+    cmds:
+      - uv run pytest --quiet
+
+  lint:
+    desc: Lint, and check formatting
+    cmds:
+      - uv run ruff check
+      - uv run ruff format --check
