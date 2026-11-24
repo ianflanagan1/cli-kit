@@ -141,6 +141,7 @@ Then:
 ```sh
 devbox run -- task test    # pytest
 devbox run -- task lint    # ruff check and format
+devbox run -- task check   # lint, then test, failing on any problem
 ```
 
 Tests use `--import-mode=importlib`; share test helpers through fixtures in `conftest.py`, not by importing it.
